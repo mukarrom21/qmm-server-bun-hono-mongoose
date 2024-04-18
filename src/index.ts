@@ -1,13 +1,14 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { prettyJSON } from "hono/pretty-json";
+import { handle } from "hono/vercel";
 import { onError } from "./app/middlewares/globalErrorHandler";
 import { notFound, notFoundMiddleware } from "./app/middlewares/notFound";
 import router from "./app/routes";
 import main from "./app/utils/db";
 import sendResponse from "./app/utils/sendResponse";
 
-const app = new Hono();
+const app = new Hono().basePath("/");
 
 // pretty JSON middleware
 app.use("*", prettyJSON());
@@ -53,6 +54,6 @@ const port = process.env.PORT || 5000;
 console.log(`Running at http://localhost:${port}`);
 
 export default {
-  port: port,
-  fetch: app.fetch,
+  fetch: handle(app),
+  port,
 };
